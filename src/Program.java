@@ -5,5 +5,9 @@ public class Program {
 		System.out.println("Helle World!");
 
 	}
+	
+	public static void lireValeur(String s) {
+		
+	}
 
 }
