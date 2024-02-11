@@ -15,16 +15,6 @@ public class ProgrammePrincipal {
 	 */
 	public static void main(String[] args)
 	{
-		FileSimplementChainer l = new FileSimplementChainer();
-		l.ajouterElement(2);
-		System.out.println(l.elementDebut());
-		
-		l.ajouterElement(8);
-		System.out.println(l.elementDebut());
-		
-		l.enleverElement();
-		System.out.println(l.elementDebut());
-		
 		//SatelliteRelai satellite = new SatelliteRelai();
 		//satellite.start();
 	}
