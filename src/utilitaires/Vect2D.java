@@ -57,10 +57,7 @@ public class Vect2D
 	{
 		return "X: "+longueurX+"Y: "+longueurY+" avec une longueur de "+getLongueur();
 	}
-	
-	/*
-	 * 
-	 */
+
 	@Override
 	public boolean equals(Object o) 
 	{
