@@ -13,9 +13,8 @@ public class ProgrammePrincipal {
 	 * @param args, pas utilisé
 	 */
 	public static void main(String[] args){
-	
-		Vect2D v = new Vect2D(5,4);
-		System.out.println("Longueur vecteur: "+v.getLongueur());
+		
+		Vect2D v = new Vect2D();
 		//SatelliteRelai satellite = new SatelliteRelai();
 		//satellite.start();
 		
