@@ -25,6 +25,7 @@ package modele.satelliteRelai;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
+import utilitaires.FileSimplementChainer;
 
 import modele.communication.Message;
 
@@ -34,24 +35,29 @@ public class SatelliteRelai extends Thread{
 	static final double PROBABILITE_PERTE_MESSAGE = 0.15;
 	
 	ReentrantLock lock = new ReentrantLock();
-	
+
 	private Random rand = new Random();
 	
+	private FileSimplementChainer<Message> msgRover = new FileSimplementChainer<Message>();
+	private FileSimplementChainer<Message> msgCentreControle = new FileSimplementChainer<Message>();
 	
+	//private ArrayList<Message> msgRover = new ArrayList<Message>();
+	//private ArrayList<Message> msgCentreControle = new ArrayList<Message>();
 	/**
 	 * Méthode permettant d'envoyer un message vers le centre d'opération
 	 * @param msg, message à envoyer
 	 */
-	public void envoyerMessageVersCentrOp(Message msg) {
-		
+	public void envoyerMessageVersCentrOp(Message msg) 
+	{	
 		lock.lock();
 		
-		try {
-
-			/*
-			 * (5.1) Insérer votre code ici 
-			 */
-			
+		try 
+		{
+			double nbTirer = rand.nextDouble();
+			if(nbTirer > PROBABILITE_PERTE_MESSAGE) 
+			{
+				msgCentreControle.add(msg);
+			}
 		}finally {
 			lock.unlock();
 		}
@@ -64,12 +70,13 @@ public class SatelliteRelai extends Thread{
 	public void envoyerMessageVersRover(Message msg) {
 		lock.lock();
 		
-		try {
-
-			/*
-			 * (5.2) Insérer votre code ici 
-			 */
-			
+		try 
+		{
+			double nbTirer = rand.nextDouble();
+			if(nbTirer > PROBABILITE_PERTE_MESSAGE) 
+			{
+				msgRover.add(msg);
+			}	
 		}finally {
 			lock.unlock();
 		}
@@ -78,12 +85,16 @@ public class SatelliteRelai extends Thread{
 	@Override
 	public void run() {
 		
-		while(true) {
+		while(true) 
+		{
+			if(msgCentreControle.size() > 0) 
+			{
+				msgCentreControle.remove(0);
+			}
+			else if(msgRover.size() > 0) {
+				msgRover.remove(0);
+			}
 			
-			/*
-			 * (5.3) Insérer votre code ici 
-			 */
-
 			// attend le prochain cycle
 			try {
 				Thread.sleep(TEMPS_CYCLE_MS);

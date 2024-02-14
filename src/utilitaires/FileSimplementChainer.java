@@ -1,13 +1,18 @@
 package utilitaires;
 
-public class FileSimplementChainer 
+/*
+ * Pour cette classe, vu que je ne savais pas pour quelles données nous avions a appeler la file,
+ * j'ai crée un classe générique. Il suffit juste de préciser quelles données cette file prend.
+ * Par exemple: FileSimplementChainer<Type> file = new FileSimplementChainer<Type>();
+ */
+public class FileSimplementChainer <T>
 {
 	class Noeud
 	{
-		public double valeur;
+		public T valeur;
 		public Noeud suivant;
 		
-		public Noeud(double v) 
+		public Noeud(T v) 
 		{
 			valeur = v;
 			suivant = null;
@@ -23,7 +28,7 @@ public class FileSimplementChainer
 		nbElement = 0;
 	}
 	
-	public void ajouterElement(double v) 
+	public void ajouterElement(T v) 
 	{
 		Noeud n = new Noeud(v);
 		
@@ -37,13 +42,13 @@ public class FileSimplementChainer
 	
 	public void enleverElement() 
 	{
-		double valeurDebut = tete.valeur;
+		T valeurDebut = tete.valeur;
 		
 		tete = tete.suivant;
 		nbElement --;
 	}
 	
-	public double elementDebut() 
+	public T elementDebut() 
 	{
 		return tete.valeur;
 	}
@@ -52,6 +57,5 @@ public class FileSimplementChainer
 	{
 		return tete == null;
 	}
-	
 }
 

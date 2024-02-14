@@ -14,9 +14,9 @@ public class ProgrammePrincipal {
 	 * @param args, pas utilisé
 	 */
 	public static void main(String[] args)
-	{
-		//SatelliteRelai satellite = new SatelliteRelai();
-		//satellite.start();
+	{	
+		SatelliteRelai satellite = new SatelliteRelai();
+		satellite.start();
 	}
 
 }
