@@ -56,7 +56,7 @@ public class SatelliteRelai extends Thread{
 			double nbTirer = rand.nextDouble();
 			if(nbTirer > PROBABILITE_PERTE_MESSAGE) 
 			{
-				msgCentreControle.add(msg);
+				msgCentreControle.ajouterElement(msg);
 			}
 		}finally {
 			lock.unlock();
@@ -75,7 +75,7 @@ public class SatelliteRelai extends Thread{
 			double nbTirer = rand.nextDouble();
 			if(nbTirer > PROBABILITE_PERTE_MESSAGE) 
 			{
-				msgRover.add(msg);
+				msgRover.ajouterElement(msg);
 			}	
 		}finally {
 			lock.unlock();
@@ -87,12 +87,12 @@ public class SatelliteRelai extends Thread{
 		
 		while(true) 
 		{
-			if(msgCentreControle.size() > 0) 
+			if(msgCentreControle.nbElement > 0) 
 			{
-				msgCentreControle.remove(0);
+				msgCentreControle.enleverElement();;
 			}
-			else if(msgRover.size() > 0) {
-				msgRover.remove(0);
+			else if(msgRover.nbElement > 0) {
+				msgRover.enleverElement();;
 			}
 			
 			// attend le prochain cycle
