@@ -1,6 +1,7 @@
 package Programme;
 
 import java.io.IOException;
+import java.util.Random;
 
 import modele.satelliteRelai.SatelliteRelai;
 import utilitaires.Vect2D;
@@ -15,7 +16,6 @@ public class ProgrammePrincipal {
 	 */
 	public static void main(String[] args)
 	{			
-		System.out.println();
 		//SatelliteRelai satellite = new SatelliteRelai();
 		//satellite.start();
 	}
