@@ -50,7 +50,7 @@ public class SatelliteRelai extends Thread{
 		lock.lock();
 		
 		/*
-		 * Le code en dessous cellui de 5.1
+		 * Le code en dessous cellui de 5.1 (question pour le prof)
 		 */
 		try 
 		{
