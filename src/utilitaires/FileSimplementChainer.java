@@ -62,8 +62,11 @@ public class FileSimplementChainer <T>
 	 */
 	public void enleverElement() 
 	{
-		tete = tete.suivant;
-		nbElement --;
+		if(!estVide()) 
+		{
+			tete = tete.suivant;
+			nbElement --;
+		}
 	}
 	
 	public T elementDebut() 

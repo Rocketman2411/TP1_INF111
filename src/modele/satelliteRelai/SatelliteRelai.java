@@ -87,23 +87,20 @@ public class SatelliteRelai extends Thread{
 	}
 
 	@Override
-	public void run() {
+	public void run() 
+	{
 		
 		while(true) 
 		{
 			/*
 			 * Le code en dessous cellui de 5.3
 			 */
-			if(msgCentreControle.nbElement > 0) 
-			{
-				msgCentreControle.enleverElement();;
-			}
-			else if(msgRover.nbElement > 0) {
-				msgRover.enleverElement();;
-			}
-			
+				msgCentreControle.enleverElement();
+				msgRover.enleverElement();
+				
 			// attend le prochain cycle
-			try {
+			try 
+			{
 				Thread.sleep(TEMPS_CYCLE_MS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
