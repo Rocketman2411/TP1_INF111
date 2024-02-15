@@ -40,9 +40,7 @@ public class SatelliteRelai extends Thread{
 	
 	private FileSimplementChainer<Message> msgRover = new FileSimplementChainer<Message>();
 	private FileSimplementChainer<Message> msgCentreControle = new FileSimplementChainer<Message>();
-	
-	//private ArrayList<Message> msgRover = new ArrayList<Message>();
-	//private ArrayList<Message> msgCentreControle = new ArrayList<Message>();
+
 	/**
 	 * Méthode permettant d'envoyer un message vers le centre d'opération
 	 * @param msg, message à envoyer
@@ -51,6 +49,9 @@ public class SatelliteRelai extends Thread{
 	{	
 		lock.lock();
 		
+		/*
+		 * Le code en dessous cellui de 5.1
+		 */
 		try 
 		{
 			double nbTirer = rand.nextDouble();
@@ -70,6 +71,9 @@ public class SatelliteRelai extends Thread{
 	public void envoyerMessageVersRover(Message msg) {
 		lock.lock();
 		
+		/*
+		 * Le code en dessous cellui de 5.2
+		 */
 		try 
 		{
 			double nbTirer = rand.nextDouble();
@@ -87,6 +91,9 @@ public class SatelliteRelai extends Thread{
 		
 		while(true) 
 		{
+			/*
+			 * Le code en dessous cellui de 5.3
+			 */
 			if(msgCentreControle.nbElement > 0) 
 			{
 				msgCentreControle.enleverElement();;

@@ -7,11 +7,18 @@ package utilitaires;
  */
 public class FileSimplementChainer <T>
 {
+	/*
+	 * C'est à l'intérieur de cette objet que la donnée sera mise. 
+	 * Contient la valeur en temps que tel et un objet (Noeud) qui vas pointer la prochaine donnée
+	 */
 	class Noeud
 	{
 		public T valeur;
 		public Noeud suivant;
 		
+		/*
+		 * L'objet est null car il sert juste à pointer 
+		 */
 		public Noeud(T v) 
 		{
 			valeur = v;
@@ -22,12 +29,22 @@ public class FileSimplementChainer <T>
 	public Noeud tete;
 	public int nbElement;
 	
+	/*
+	 * C'est comme notre première donnée de la file mais reste toujours la
+	 */
 	public FileSimplementChainer() 
 	{
 		tete = null;
 		nbElement = 0;
 	}
 	
+	/*
+	 * Notre noeud tête vas pointer maintenant vers le prochaine noeud qu'on ajoute
+	 * Si la file n'est pas vide, le nouvelle noeud(.suivant) vas pointer vers le noeud de la tête
+	 * Sant que la tête pointe déjà vers un noeud, le nouveau noeud vas pointer vers l'avant 
+	 * dernier élément.
+	 * Une fois se lien établie, la tête peut maintenant pointer vers les nouveau noeud
+	 */
 	public void ajouterElement(T v) 
 	{
 		Noeud n = new Noeud(v);
@@ -40,10 +57,11 @@ public class FileSimplementChainer <T>
 		nbElement ++;
 	}
 	
+	/*
+	 * La tête vas simplement pointer vers l'avant dernière valeur et ignore la première valeur
+	 */
 	public void enleverElement() 
 	{
-		T valeurDebut = tete.valeur;
-		
 		tete = tete.suivant;
 		nbElement --;
 	}
