@@ -18,6 +18,7 @@ public class ProgrammePrincipal {
 	{			
 		System.out.println("Hello World");
 		//bonjour
+		//random
 		//SatelliteRelai satellite = new SatelliteRelai();
 		//satellite.start();
 	}
