@@ -35,6 +35,7 @@ package modele.communication;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
+import modele.communication.Nack;
 
 public abstract class TransporteurMessage extends Thread {
 	
@@ -42,6 +43,9 @@ public abstract class TransporteurMessage extends Thread {
 	protected CompteurMessage compteurMsg;
 	// lock qui protège la liste de messages reçu
 	private ReentrantLock lock = new ReentrantLock();
+	
+	private ArrayList<Message> messageRecu = new ArrayList <Message>();
+	private ArrayList<Message> messageEnvoyer = new ArrayList <Message> ();
 	
 	/**
 	 * Constructeur, initialise le compteur de messages unique
@@ -56,39 +60,185 @@ public abstract class TransporteurMessage extends Thread {
 	 * aux classes dérivés
 	 * @param msg, message reçu
 	 */
-	public void receptionMessageDeSatellite(Message msg) {
+	public void receptionMessageDeSatellite(Message msg) 
+	{
+		int compteurNack = 0;
 		lock.lock();
 		
-		try {
-			
-			/*
-			 * (6.3.3) Insérer votre code ici 
-			 */
-			
-		}finally {
+		try 
+		{
+			//Si la liste est vide ou que le message recu est un Nack, il est placé
+			//directement au début
+			//-Hichem
+			if(equals(msg) || messageRecu == null) 
+			{
+				messageRecu.add(0,msg);
+			}
+			else
+			{
+				//Si la liste n'est pas vide, on par à la recherche du nombre de Nack 
+				//pour voir par la suite ou il faut commencer à trier
+				//Hichem
+				int i = 0;
+				while(i < messageRecu.size()) 
+				{
+					if(equals(messageRecu.get(i))) 
+					{
+						++compteurNack;
+						++i;
+					}
+				}
+				//Méthode permettant de trier à partir d'un message nonNack
+				//-Hichem
+				trier(compteurNack, msg);
+			}
+		}
+		finally 
+		{
 			lock.unlock();
 		}
+	}
+	
+	public void trier (int comp, Message msg) 
+
+	{
+		//Si la liste n'as que des Nack on ajoute le message à la fin
+		//-Hichem
+		if(messageRecu.size() == comp)
+		{
+			messageRecu.add(msg);
+		}
+		else 
+		{
+			//Si la liste ne contient que des message Nack et 1 nonNack
+			//-Hichem
+			if(comp == messageRecu.size() -1) 
+			{
+				//Si le message à ajouter est < au message déjà présent, il prend sa place
+				//-Hichem
+				if(msg.getCompte() < messageRecu.get(comp).getCompte()) 
+				{
+					messageRecu.add(comp,msg);
+				}
+				//Sinon il l'ajoute à la fin
+				//-Hichem
+				else 
+				{
+					messageRecu.add(msg);
+				}
+			}
+			else
+			{
+				//Sinon on commence à balayer à partir de la ou il y a des message nonNack pour 
+				//mettre notre message à la bonne position
+				//-Hichem
+				
+				int i = comp;
+				while(i < messageRecu.size()) 
+				{
+					if(msg.getCompte() < messageRecu.get(i).getCompte()) 
+					{
+						messageRecu.add(i, msg);
+						++i;
+					}
+					++i;
+				}
+			}
+		}
+	}
+	
+	//Permet de comparer Si le message envoyer est en fait un Nack. Si c'est le cas, envoie True
+	//-Hichem
+	@Override
+	public boolean equals(Object obj) 
+	{
+		boolean etat;
+		if(obj instanceof Nack) 
+		{
+			etat = true;
+		}
+		else 
+		{
+			etat = false;
+		}
+		return etat;
 	}
 
 	@Override
 	/**
 	 * Tâche effectuant la gestion des messages reçu
 	 */
-	public void run() {
-		
+	public void run() 
+	{	
 		int compteCourant = 0;
-		
-		while(true) {
+		int indiceListe = 0;
+		while(true) 
+		{
 			
 			lock.lock();
 			
-			try {
-
-				/*
-				 * (6.3.4) Insérer votre code ici 
-				 */
-			
-			}finally{
+			try 
+			{
+				boolean NackEnvoyer = false;
+				while(!messageRecu.isEmpty() && NackEnvoyer && indiceListe < messageRecu.size()) 
+				{
+					Message msgATraiter = messageRecu.get(0);
+					if(equals(msgATraiter))
+					{
+						int i = 0;
+						ArrayList<Message> temp = new ArrayList<Message>();
+						
+						//Chercher dans la liste des messages à envoyer (selon le compte)
+						//et vas garder dans une liste temporaire tout les éléments >= compteur nack
+						//-Hichem
+						while(i < messageEnvoyer.size()) 
+						{
+							if(msgATraiter.getCompte() <= messageEnvoyer.get(i).getCompte()) 
+							{
+								temp.add(messageEnvoyer.get(i));
+								++i;
+							}
+							++i;
+						}
+						
+						//Ensuite il vas peek au debut de cette liste temporaire et renvoie le message
+						//-Hichem
+						envoyerMessage(temp.get(0));
+						
+						//enlever le nack de la liste
+						//-Hichem
+						messageRecu.remove(0);
+					}
+					//Détecte si dans la liste des message reçus s'il y a des message manquand
+					//si c'est le cas envoie un nack
+					//-Hichem
+					else if (msgATraiter.getCompte() != compteCourant)
+					{
+						envoyerMessage(new Nack(compteCourant));
+						NackEnvoyer = true;
+					}
+					//Si le message à traiter est en fait un double
+					//-Hichem
+					else if(msgATraiter.getCompte()  < compteCourant) 
+					{
+						messageRecu.remove(0);
+					}
+					//Enfin, si c'est un message il est envoyer au gestionnaire 
+					//-Hichem
+					else 
+					{
+						gestionnaireMessage(msgATraiter);
+						++indiceListe;
+						++compteCourant;
+					}
+					compteurMsg.getCompteActuel();
+					//Par sûr de cette partie 
+					//-Hichem
+					envoyerMessage(new NoOp(compteCourant));
+				}
+			}
+			finally
+			{
 				lock.unlock();
 			}
 			
@@ -100,7 +250,7 @@ public abstract class TransporteurMessage extends Thread {
 			}
 		}
 	}
-
+	
 	/**
 	 * méthode abstraite utilisé pour envoyer un message
 	 * @param msg, le message à envoyer

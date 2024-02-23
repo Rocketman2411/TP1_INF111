@@ -16,7 +16,8 @@ package modele.communication;
  */
 
 
-public abstract class Message {
+public abstract class Message //implements Comparable<Message>
+{
 
 	private int compte;
 	private long tempsEnvoi;
@@ -53,7 +54,5 @@ public abstract class Message {
 	 */
 	public int getCompte() {
 		return compte;
-	}
-
-	
+	}	
 }

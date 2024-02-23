@@ -2,12 +2,17 @@ package Programme;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import modele.satelliteRelai.SatelliteRelai;
-import utilitaires.Vect2D;
-import utilitaires.FileSimplementChainer;
+import modele.communication.Message;
+import modele.communication.NoOp;
+import modele.communication.Nack;
 
-public class ProgrammePrincipal {
+
+public class ProgrammePrincipal
+{
 
 	/**
 	 * Programme principale, instancie les éléments de la simulation,
@@ -16,9 +21,8 @@ public class ProgrammePrincipal {
 	 */
 	public static void main(String[] args)
 	{			
-		System.out.println("Hello World");
 		//SatelliteRelai satellite = new SatelliteRelai();
 		//satellite.start();
 	}
-
+	
 }
