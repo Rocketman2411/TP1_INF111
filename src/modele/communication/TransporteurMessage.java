@@ -44,9 +44,10 @@ public abstract class TransporteurMessage extends Thread {
 	// lock qui protège la liste de messages reçu
 	private ReentrantLock lock = new ReentrantLock();
 	
-	private ArrayList<Message> messageRecu = new ArrayList <Message>();
-	private ArrayList<Message> messageEnvoyer = new ArrayList <Message> ();
+	public ArrayList<Message> messageRecu = new ArrayList <Message>();
+	public ArrayList<Message> messageEnvoyer = new ArrayList <Message> ();
 	
+
 	/**
 	 * Constructeur, initialise le compteur de messages unique
 	 */
@@ -172,6 +173,7 @@ public abstract class TransporteurMessage extends Thread {
 	{	
 		int compteCourant = 0;
 		int indiceListe = 0;
+		boolean nackEnvoyer = true;
 		while(true) 
 		{
 			
@@ -179,57 +181,67 @@ public abstract class TransporteurMessage extends Thread {
 			
 			try 
 			{
-				boolean NackEnvoyer = false;
-				while(!messageRecu.isEmpty() && NackEnvoyer && indiceListe < messageRecu.size()) 
+				Message typeNack = messageRecu.get(0);
+				
+				if(equals(typeNack))
 				{
-					Message msgATraiter = messageRecu.get(0);
-					if(equals(msgATraiter))
+					nackEnvoyer = true;
+					int i = 0;
+					ArrayList<Message> temp = new ArrayList<Message>();
+					
+					//Chercher dans la liste des messages envoyer (selon le compte)
+					//et vas garder dans une liste temporaire tout les éléments >= compteur nack
+					//-Hichem
+					while(i < messageEnvoyer.size()) 
 					{
-						int i = 0;
-						ArrayList<Message> temp = new ArrayList<Message>();
-						
-						//Chercher dans la liste des messages à envoyer (selon le compte)
-						//et vas garder dans une liste temporaire tout les éléments >= compteur nack
-						//-Hichem
-						while(i < messageEnvoyer.size()) 
+						if(typeNack.getCompte() <= messageEnvoyer.get(i).getCompte()) 
 						{
-							if(msgATraiter.getCompte() <= messageEnvoyer.get(i).getCompte()) 
-							{
-								temp.add(messageEnvoyer.get(i));
-								++i;
-							}
+							temp.add(messageEnvoyer.get(i));
 							++i;
 						}
-						
-						//Ensuite il vas peek au debut de cette liste temporaire et renvoie le message
-						//-Hichem
-						envoyerMessage(temp.get(0));
-						
-						//enlever le nack de la liste
-						//-Hichem
-						messageRecu.remove(0);
+						++i;
 					}
-					//Détecte si dans la liste des message reçus s'il y a des message manquand
-					//si c'est le cas envoie un nack
+					
+					//Ensuite il vas peek au debut de cette liste temporaire et renvoie le message
 					//-Hichem
-					else if (msgATraiter.getCompte() != compteCourant)
+					envoyerMessage(temp.get(0));
+					
+					//enlever le nack de la liste
+					//-Hichem
+					messageRecu.remove(0);
+					
+					compteCourant = 0;
+					indiceListe = 0;
+				}
+
+				while(!messageRecu.isEmpty() && nackEnvoyer && indiceListe < messageRecu.size()) 
+				{
+					Message msgATraiter = messageRecu.get(indiceListe);
+
+					//Détecte si dans la liste des message reçus s'il y a des message manquant
+					if(msgATraiter.getCompte() != compteCourant) 
 					{
-						envoyerMessage(new Nack(compteCourant));
-						NackEnvoyer = true;
+
+							envoyerMessage(new Nack(compteCourant));
+							nackEnvoyer = false;
 					}
-					//Si le message à traiter est en fait un double
-					//-Hichem
-					else if(msgATraiter.getCompte()  < compteCourant) 
-					{
-						messageRecu.remove(0);
-					}
-					//Enfin, si c'est un message il est envoyer au gestionnaire 
-					//-Hichem
 					else 
 					{
-						gestionnaireMessage(msgATraiter);
-						++indiceListe;
-						++compteCourant;
+						//Si le message à traiter est en fait un double
+						//-Hichem
+						if(msgATraiter.getCompte() == messageRecu.get(compteCourant+1).getCompte() && messageRecu.get(compteCourant+1) != null ) 
+						{
+							messageRecu.remove(compteCourant+1);
+						}
+						else 
+						{
+							//Enfin, si c'est un message il est envoyer au gestionnaire 
+							//-Hichem
+							System.out.println("Message gérer");
+							gestionnaireMessage(msgATraiter);
+							++indiceListe;
+							++compteCourant;
+						}	
 					}
 					compteurMsg.getCompteActuel();
 					//Par sûr de cette partie 

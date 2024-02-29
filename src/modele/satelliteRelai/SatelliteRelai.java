@@ -28,6 +28,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import utilitaires.FileSimplementChainer;
 
 import modele.communication.Message;
+import centreControl.CentreControl;
+import rover.Rover;
 
 public class SatelliteRelai extends Thread{
 	
@@ -38,9 +40,12 @@ public class SatelliteRelai extends Thread{
 
 	private Random rand = new Random();
 	
-	private FileSimplementChainer<Message> msgRover = new FileSimplementChainer<Message>();
-	private FileSimplementChainer<Message> msgCentreControle = new FileSimplementChainer<Message>();
-
+	private ArrayList<Message> msgRover = new ArrayList<Message>();
+	private ArrayList<Message> msgCentreControle = new ArrayList<Message>();
+	
+	private CentreControl refCentreControl;
+	private Rover refRover;
+	
 	/**
 	 * Méthode permettant d'envoyer un message vers le centre d'opération
 	 * @param msg, message à envoyer
@@ -49,15 +54,13 @@ public class SatelliteRelai extends Thread{
 	{	
 		lock.lock();
 		
-		/*
-		 * Le code en dessous cellui de 5.1 (question pour le prof)
-		 */
+		//Code pour la section 5.1
 		try 
 		{
 			double nbTirer = rand.nextDouble();
 			if(nbTirer > PROBABILITE_PERTE_MESSAGE) 
 			{
-				msgCentreControle.ajouterElement(msg);
+				msgCentreControle.add(msg);
 			}
 		}finally {
 			lock.unlock();
@@ -68,24 +71,35 @@ public class SatelliteRelai extends Thread{
 	 * Méthode permettant d'envoyer un message vers le rover
 	 * @param msg, message à envoyer
 	 */
-	public void envoyerMessageVersRover(Message msg) {
+	public void envoyerMessageVersRover(Message msg) 
+	{
 		lock.lock();
 		
-		/*
-		 * Le code en dessous cellui de 5.2
-		 */
+		
+		 //Code pour la section 5.2
 		try 
 		{
 			double nbTirer = rand.nextDouble();
 			if(nbTirer > PROBABILITE_PERTE_MESSAGE) 
 			{
-				msgRover.ajouterElement(msg);
+				msgRover.add(msg);
 			}	
 		}finally {
 			lock.unlock();
 		}
 	}
 
+	//Reçoit un variable de type CentreControl et enregistre le contenu dans la variable membre
+	public void lierCentrOp(CentreControl refCentreControl) 
+	{
+		this.refCentreControl = refCentreControl;
+	}
+	
+	//Reçoit un variable de type Rover et enregistre le contenu dans la variable membre
+	public void lierRover(Rover refRover) 
+	{
+		this.refRover = refRover;
+	}
 	@Override
 	public void run() 
 	{
@@ -95,8 +109,8 @@ public class SatelliteRelai extends Thread{
 			/*
 			 * Le code en dessous cellui de 5.3
 			 */
-				msgCentreControle.enleverElement();
-				msgRover.enleverElement();
+				msgCentreControle.clear();
+				msgRover.clear();
 				
 			// attend le prochain cycle
 			try 
