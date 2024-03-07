@@ -28,7 +28,7 @@ public class ProgrammePrincipal
 	{					
 		//SatelliteRelai satellite = new SatelliteRelai();
 		//satellite.start();
-		//bonjour
+		//commentaire
 	}
 	
 }
